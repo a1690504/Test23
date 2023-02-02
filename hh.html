@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	
+	</head>
+	<body style="border: #000000 2px solid;text-align: center;">
+		<script>
+		
+		var ll;
+		(function (){
+			var updatemovie = window.requestAnimationFrame;
+			var time=0;
+			var speed = 1;
+			var paint;
+			var keyDown={'37':'left()','38':'turn()','39':'right()','40':'down()'}
+			
+			ll=keyDown;
+			
+			var blockType;
+			    var turnState;
+			    var score;
+			    var nextblockTpye=-1,nextturnState=-1;
+			    var x,y;
+			    var timer;
+			    var map =new array2(12,21);
+			    var shapes = 
+					[
+						            [[0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,],
+						            [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,],
+						            [0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,],
+						            [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,]],
+						
+						            [[1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,],
+						            [1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,],
+						            [1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,],
+						            [1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,]],
+								];
+			
+			function bb(){
+				
+					
+				
+				
+			
+			}
+			
+			
+			
+			function init() {
+			              can = document.getElementById("dd2");
+			              paint = can.getContext("2d");
+			            
+			             
+			          }
+			function Paint(g){
+				vv=document.getElementById('dd2');
+				g=vv.getContext('2d');
+				g.fillStyle='#000000';
+				//g.fillRect(50,50,100,100);
+				
+			/*	g.moveTo(50,100);
+				g.lineTo(50,600);
+				g.stroke();
+				
+				g.strokeRect(0,0,25,25);
+				*/
+				var i,j;
+				
+				for (j=0;j<16;j++){
+				            if (shapes[blockType][turnState][j]==1){
+				                g.fillRect((j%4+x+1)*15,(Math.floor(j/4+y))*15,15,15);
+								//console.log(((j%4+x+1)*15)+'---'+(Math.floor(j/4+y))*15);
+								
+				            }
+				        }
+				
+				  for (j=0;j<21;j++){
+				            for (i=0;i<12;i++){
+				                if (map[i][j]==1){
+				                    g.fillRect(i*15,j*15,15,15);
+				                }
+				                if (map[i][j]==2){
+				                    g.strokeRect(i*15,j*15,15,15);
+				                }
+				            }
+				        }
+					 for (j=0;j<16;j++){
+					            if (shapes[nextblockTpye][nextturnState][j]==1){
+					                g.fillRect(225+(j%4)*15,(Math.floor(j/4))*15+100,15,15);
+					            }
+					            }	
+				
+			}
+			
+			function gameover(){
+			        if (blow(x,y,blockType,turnState)==0){
+			            return 1;
+			        }
+			        return 0;
+			    }
+			function newblock(){
+			        if (nextblockTpye==-1&&nextturnState==-1){
+			            blockType=  Math.floor((Math.random()*1000)%2) ;
+			            turnState= Math.floor((Math.random()*1000)%4) ;
+			            nextblockTpye= Math.floor((Math.random()*1000)%2) ;
+			            nextturnState= Math.floor((Math.random()*1000)%4) ;
+			        }else {
+			            blockType=nextblockTpye;
+			            turnState=nextturnState;
+			            nextblockTpye= Math.floor((Math.random()*1000)%2) ;
+			            nextturnState=Math.floor((Math.random()*1000)%4);
+			        }
+			        x=4;y=0;
+					
+					if(gameover()==1){
+						
+						console.log("游戏结束");
+						clearInterval(set22);
+					}
+					
+					}
+			    /*    if (gameover()==1){
+			            newmap();
+			            drawwall();
+			            score=0;
+			            JOptionPane.showMessageDialog(null,"Gamer Over");
+			        }
+			
+			    }	*/	
+				  
+		function turn(){
+		         var tempturnstate=turnState;
+		         turnState=(turnState+1)%4;
+		         if (blow(x,y,blockType,turnState)==1){
+		 
+		         }
+		         if (blow(x,y,blockType,turnState)==0){
+		             turnState=tempturnstate;
+		         }
+		         //repaint();
+				 reep();
+		     }
+		function left(){
+		        if (blow(x-1,y,blockType,turnState)==1){
+		            x=x-1;
+		        }
+		       // repaint();
+			   reep();
+		    }
+		
+		function right(){
+		        if (blow(x+1,y,blockType,turnState)==1){
+		            x=x+1;
+		        }
+		       // repaint();
+			   reep();
+		    }
+			
+		 function down(){
+		        if (blow(x,y+1,blockType,turnState)==1){
+		           y=y+1;
+		        }
+		        if (blow(x,y+1,blockType,turnState)==0){
+		            add(x,y,blockType,turnState);
+		            newblock();
+		            delline();
+		        }
+		       // repaint();
+			   reep();
+		    }
+			
+		 function delline(){
+		        let c=0;
+		        for (var b=0;b<21;b++){
+		            for (var a=0;a<12;a++){
+		                if (map[a][b]==1){
+		                    c=c+1;
+		                    if (c==10){
+		                        score+=10;
+		                        for (var d=b;d>0;d--){
+		                            for (var e=0;e<12;e++){
+		                                map[e][d]=map[e][d-1];
+		                            }
+		                        }
+		                    }
+		                }
+		            }
+		            c=0;
+		        }
+		
+		    }
+			function listen2(){
+				console.log('lis263');
+			}
+			
+			var rfm;/*
+			(function loo(){
+			listen();
+			rfm=updatemovie(loo);
+			})()*/
+			
+			function listen(){
+				//console.log('lis263');
+				//console.log('lis263'+y);
+				
+				if(paint != null){
+					paint.clearRect(0,0,1000,1000);
+					paint.strokeStyle='pink';
+					Paint(paint);
+				}
+				
+				
+				  if (blow(x,y+1,blockType,turnState)==1){
+				                y=y+1;
+				            }
+				            if (blow(x,y+1,blockType,turnState)==0){
+				               add(x,y,blockType,turnState);
+				               delline();
+				               newblock();
+				            }
+				
+				           // repaint();
+						  
+			}
+			
+			
+			function reep(){
+				if(paint != null){
+					paint.clearRect(0,0,1000,1000);
+					paint.strokeStyle='pink';
+					Paint(paint);
+				}
+			}
+			
+			//setInterval(listen2,1000);
+			var set22=setInterval(listen,500);
+			//function blow( x,  y,  blockType,  turnState){
+				function blow( x,  y,  blockType,  turnState){
+			        for (var a=0;a<4;a++){
+			            for (var b=0;b<4;b++){
+			                if (((shapes[blockType][turnState][a*4+b]==1)&&(map[x+b+1][y+a]==1))
+			                        ||((shapes[blockType][turnState][a*4+b]==1)&&(map[x+b+1][y+a]==2))){
+			                    return 0;
+			                }
+			            }
+			        }
+			        return 1;
+			    }
+			 function drawwall(){
+			        var i ,j;
+					
+			       for (i=0;i<12;i++){
+			            map[i][20]=2;
+			        }
+					// map[11][0]=2;
+					// map[11][1]=2;
+					  console.log(map[11][1]);
+					
+			        for (j=0;j<21;j++){
+			            map[11][j]=2;
+			            map[0][j]=2;
+			        }
+					
+					/////////****
+					
+					var uu;
+					function kkkl2(){
+					    for(var oo=0;oo<map.length;oo++){
+					  for(var ii=0; ii<map[oo].length;ii++){
+						  uu=uu+'/'+map[oo][ii]
+						  
+					    //console.log(uu);
+					}  
+					uu=uu+" **"+oo+'列';
+					}
+					console.log(uu);
+					}
+					kkkl2();
+			    }
+			
+			function newmap(){
+			        var i,j;
+					
+			        for (i=0;i<12;i++){
+			            for (j=0;j<21;j++){
+			                map[i][j]=0;
+			            }
+			        }
+					/////////****
+					
+					var uu;
+					function kkkl2(){
+					    for(var oo=0;oo<map.length;oo++){
+					  for(var ii=0; ii<map[oo].length;ii++){
+						  uu=uu+'/'+map[oo][ii]
+						  
+					    //console.log(uu);
+					}  
+					uu=uu+" **"+oo+'列';
+					}
+					console.log(uu);
+					}
+					kkkl2();
+					
+			    }
+				
+		function drawmain() {
+		                if (null != paint) {
+		                    paint.clearRect(0, 0, 1000, 850);
+		                    paint.strokeStyle = "pink"
+		 
+		                    Paint(paint);
+		                }
+		            }
+					
+		function update() {
+			drawmain();
+		               // drawmain();
+		                time += speed;
+		                if (time % 35 == 0) {
+		 listen();
+		                  //  jt();
+		          if(time>1000){ time=0;}
+		                }
+		 
+		                updatemovie(update);
+		            }
+		function add( x, y, blockType, turnState){
+		        let j=0;
+		        for (var a=0;a<4;a++){
+		            for (var b=0;b<4;b++){
+		                if (shapes[blockType][turnState][j]==1){
+		                    map[x+b+1][y+a]=shapes[blockType][turnState][j];
+		                }
+		                j++;
+		            }
+		        }
+		    }
+		function ddbut(){
+	    document.getElementById('b1s').onclick=function(){
+			
+			turn();
+			console.log('kd+++turn');
+		}
+		
+		document.getElementById('b1x').onclick=function(){
+		
+			down();
+			console.log('kd+++cli');
+		}
+		
+		
+		
+	 
+		document.getElementById('b1z').onclick=function(){
+			//console.log('kd+++');
+			left();
+		}
+		document.getElementById('b1y').onclick=function(){
+			//console.log('kd+++');
+			right();
+		}
+		console.log('ddbt');
+			
+		}	
+		
+		function	Tetrisblock() {
+			        newblock();
+			        newmap();
+			        drawwall();
+					console.log((Math.random()*1000)%2);
+					Math.round(2.36);
+					console.log(Math.round(2.36));
+			        console.log(Math.round(2.76));
+					console.log(Math.floor(7.76));
+					
+			    }
+			/*		  
+			onload=function jj(){
+				alert('99992255');
+				console.log('99992255');
+			}*/
+			
+			onload=function(){
+				init();
+				bb();
+				console.log('55555555555');
+				Tetrisblock();
+				Paint(paint);
+				ddbut();
+			}
+			
+			onkeydown=function jj(a){
+		   
+			let bb=   typeof a;
+		    console.log('996'+bb+'-----'+a.keyCode);
+			
+			eval(keyDown[a.keyCode]);
+		    
+		    
+		};
+			
+			
+		})()
+		
+		function array2(x,y){
+			var arrayX= new Array(x);
+			//var arrayY= new Array(y);
+			for( i=0;i<x;i++){
+				//arrayX[i]=arrayY;
+				arrayX[i]= new Array(x);
+			}
+			
+			return arrayX;
+			
+			
+		}
+		</script>
+		<canvas id="dd2" width="320px" height="375px" style="border: #FF0000 2px solid;margin: 1.25rem;">
+			
+		</canvas>
+		<br />
+		<button id="b1s" style="height: 100px;width: 100px;margin: 10px;" >shNG</button><br />
+		<button id="b1z" style="height: 100px;width: 100px;margin: 20px;">z11</button>&nbsp;
+		<button id="b1x" style="height: 100px;width: 100px;margin: 20px;">x11</button>&nbsp;
+		<button id="b1y" style="height: 100px;width: 100px;margin: 20px;">y11</button>
+	</body>
+</html>
